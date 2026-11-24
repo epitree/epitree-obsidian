@@ -1,0 +1,8 @@
+/* Epitree plugin: the preview dialog's quieter and warning lines. */
+.epitree-muted {
+  color: var(--text-muted);
+}
+
+.epitree-warning {
+  color: var(--text-warning);
+}

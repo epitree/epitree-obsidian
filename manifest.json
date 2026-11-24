@@ -1,0 +1,10 @@
+{
+  "id": "epitree",
+  "name": "Epitree",
+  "version": "0.1.0",
+  "minAppVersion": "1.11.4",
+  "description": "Send notes from chosen folders to Epitree, where they become words in your Concept Tree with spaced-repetition reviews. Requires an Epitree account.",
+  "author": "Teqard Labs",
+  "authorUrl": "https://epitree.com",
+  "isDesktopOnly": false
+}
