@@ -87,10 +87,17 @@ only:
 
 ```bash
 npm install
-npm run dev      # rebuilds main.js on change
-npm test         # unit tests (vitest)
-npm run build    # typecheck and production build
+npm run dev       # rebuilds main.js on change
+npm test          # unit tests (vitest)
+npm run coverage  # the same, with a coverage report
+npm run lint      # ESLint with Obsidian's community-review rules
+npm run build     # typecheck and production build
 ```
+
+The tests run without Obsidian: `tests/obsidian-stub.ts` stands in for its
+API, and `tests/fake-app.ts` builds a small vault around it. CI
+(`.github/workflows/ci.yml`) runs lint, tests and the build on every push and
+pull request.
 
 To try it, copy or link `main.js`, `manifest.json` and `styles.css` into
 `<vault>/.obsidian/plugins/epitree/`, turn on community plugins, and enable

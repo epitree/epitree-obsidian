@@ -210,7 +210,9 @@ export default class EpitreePlugin extends Plugin {
 
   private async loadAll(): Promise<void> {
     const data = ((await this.loadData()) as StoredData | null) ?? {};
-    this.settings = { ...DEFAULT_SETTINGS, ...(data.settings ?? {}) };
+    // A copy: the defaults' lists (folders, exclusions) must not be shared
+    // with, and changed through, this plugin's settings.
+    this.settings = { ...structuredClone(DEFAULT_SETTINGS), ...(data.settings ?? {}) };
     this.state.notes = data.state?.notes ?? {};
     this.state.renames = data.state?.renames ?? {};
     if (!this.settings.vaultKey) {

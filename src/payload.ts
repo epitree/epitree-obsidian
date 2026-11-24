@@ -22,10 +22,32 @@ export interface NoteSource {
   tags: string[];
 }
 
+/**
+ * The server's limits (epitree-backend app/schemas/integrations.py). One
+ * field over its limit makes the server refuse the whole batch of 50 notes,
+ * so every field is trimmed to fit here. Keep the two in step.
+ */
+export const LIMITS = {
+  key: 1024,
+  path: 1024,
+  title: 500,
+  term: 500,
+  definition: 4000,
+  context: 2000,
+  language: 50,
+  /** The note's own text kept on the word. */
+  notes: 2000,
+  /** What the AI reads in "terms" mode. */
+  body: 8000,
+  links: 200,
+  tags: 50,
+  folder: 1024,
+  vault: 200,
+} as const;
 /** Most characters of the note's own text kept on the word. */
-export const MAX_NOTES = 2000;
+export const MAX_NOTES = LIMITS.notes;
 /** Most characters the AI reads in "terms" mode. */
-export const MAX_BODY = 8000;
+export const MAX_BODY = LIMITS.body;
 
 const DEFINITION_LINE = /^\s*(?:[-*]\s*)?(?:\*\*)?(definition|meaning)(?:\*\*)?\s*:\s*(?:\*\*)?\s*(.+)$/i;
 const CONTEXT_LINE = /^\s*(?:[-*]\s*)?(?:\*\*)?(context|example|sentence)(?:\*\*)?\s*:\s*(?:\*\*)?\s*(.+)$/i;
@@ -76,6 +98,9 @@ export function buildNote(
 ): Omit<NoteIn, "hash"> | null {
   const fm = source.frontmatter;
   if (fm && (fm.epitree === false || fm.epitree === "false")) return null;
+  // A path this long can't be shortened without losing which note it is.
+  const key = noteKey(vaultKey, source.path);
+  if (source.path.length > LIMITS.path || key.length > LIMITS.key) return null;
 
   const body = source.content.slice(source.bodyStart).replace(/^\s+/, "");
   let definition = field(fm, "definition", "meaning");
@@ -107,27 +132,32 @@ export function buildNote(
   }
   const notes = kept.join("\n").replace(/\n{3,}/g, "\n\n").trim().slice(0, MAX_NOTES);
 
-  const tags = [...new Set(source.tags.map((t) => t.replace(/^#/, "").trim()).filter(Boolean))].sort();
+  const tags = [...new Set(source.tags.map((t) => t.replace(/^#/, "").trim()).filter(Boolean))]
+    .sort()
+    .slice(0, LIMITS.tags);
   const links = [...new Set(source.linkedPaths.filter((p) => p.toLowerCase().endsWith(".md") && p !== source.path))]
     .sort()
-    .map((p) => noteKey(vaultKey, p));
+    .map((p) => noteKey(vaultKey, p))
+    .filter((k) => k.length <= LIMITS.key)
+    .slice(0, LIMITS.links);
 
   const note: Omit<NoteIn, "hash"> = {
-    key: noteKey(vaultKey, source.path),
+    key,
     path: source.path,
-    title: source.basename,
+    title: source.basename.slice(0, LIMITS.title),
     mode: rule.mode,
     links,
     tags,
+    // Shorter than the path, so within the folder limit too.
     folder: rule.keepFolders ? parentFolder(source.path) : "",
-    vault: vaultName,
+    vault: vaultName.slice(0, LIMITS.vault),
   };
   const term = field(fm, "term", "word");
   const language = field(fm, "language", "lang");
-  if (term) note.term = term;
-  if (definition) note.definition = definition;
-  if (context) note.context = context;
-  if (language) note.language = language;
+  if (term) note.term = term.slice(0, LIMITS.term);
+  if (definition) note.definition = definition.slice(0, LIMITS.definition);
+  if (context) note.context = context.slice(0, LIMITS.context);
+  if (language) note.language = language.slice(0, LIMITS.language);
   if (notes) note.notes = notes;
   if (rule.mode === "terms") note.body = body.trim().slice(0, MAX_BODY);
   return note;
