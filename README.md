@@ -30,6 +30,17 @@ and the sync goes one way: nothing in your vault is changed or deleted.
    how its notes are read.
 4. Run **Epitree: Preview what would be sent**, then **Send**.
 
+### Beta testing (before it is in Obsidian's directory)
+
+1. In Obsidian, open **Settings → Community plugins → Browse**, install
+   **BRAT**, and enable it.
+2. Run BRAT's command **Add a beta plugin for testing**, enter
+   `epitree/epitree-obsidian`, and confirm.
+3. Enable **Epitree** under **Settings → Community plugins**, then follow the
+   steps above.
+
+BRAT checks for new versions of the plugin when Obsidian starts.
+
 ### Commands
 
 | Command | What it does |
