@@ -4,7 +4,7 @@
  * server refuse the whole batch of 50, so the plugin must never send one.
  */
 import { describe, expect, it } from "vitest";
-import { LIMITS, buildNote, hashNote, type NoteSource } from "../src/payload";
+import { LIMITS, buildNote, hashNote, plainLinks, type NoteSource } from "../src/payload";
 import type { FolderRule } from "../src/types";
 
 const WORD: FolderRule = { folder: "", mode: "word", keepFolders: true };
@@ -119,5 +119,29 @@ describe("hashNote", () => {
     const asTerms = build(source("Raft.md", "Raft elects a leader."), TERMS);
     expect(await hashNote(renamed)).toBe(await hashNote(note));
     expect(await hashNote(asTerms)).not.toBe(await hashNote(note));
+  });
+});
+
+describe("links in the text", () => {
+  it("are sent as the words a reader sees", () => {
+    expect(plainLinks("Not to be confused with [[Tisch|a table]].")).toBe("Not to be confused with a table.");
+    expect(plainLinks("Needs [[Idempotency key#Retries|keys]] and [[Idempotency key#Retries]].")).toBe(
+      "Needs keys and Idempotency key.",
+    );
+    expect(plainLinks("See [[Vocab/German/Stuhl]] and [[#Retries]].")).toBe("See Stuhl and Retries.");
+    expect(plainLinks("A photo: ![[desk.png]] here.")).toBe("A photo:  here.");
+  });
+
+  it("are cleaned in notes, definitions and sentences, but still sent as links", () => {
+    const note = build(
+      source("Fahrrad.md", "Context: I ride my [[Fahrrad]] daily.\nNot to be confused with [[Tisch|a table]].", {
+        frontmatter: { definition: "A [[bicycle]]." },
+        linkedPaths: ["Tisch.md", "Fahrrad.md"],
+      }),
+    );
+    expect(note.definition).toBe("A bicycle.");
+    expect(note.context).toBe("I ride my Fahrrad daily.");
+    expect(note.notes).toBe("Not to be confused with a table.");
+    expect(note.links).toEqual(["v1/Tisch.md"]);
   });
 });

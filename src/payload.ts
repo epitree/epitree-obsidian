@@ -76,8 +76,30 @@ function field(frontmatter: Record<string, unknown> | null, ...names: string[]):
   return undefined;
 }
 
+function optionalPlain(value: string | undefined): string | undefined {
+  return value === undefined ? undefined : plainLinks(value);
+}
+
 function unquote(value: string): string {
   return value.trim().replace(/^["“”']+|["“”']+$/g, "").trim();
+}
+
+/**
+ * Wikilinks as the words a reader sees: "[[Tisch|a table]]" is "a table",
+ * "[[Idempotency key#Retries]]" is "Idempotency key", "[[#Retries]]" is
+ * "Retries", and embeds ("![[photo.png]]") are dropped. The text is read on
+ * review cards, outside Obsidian, where link syntax is noise. The links
+ * themselves are still sent, resolved, in `links`.
+ */
+export function plainLinks(text: string): string {
+  return text.replace(/(!?)\[\[([^\]]+)\]\]/g, (_match, embed: string, inner: string) => {
+    if (embed) return "";
+    const [target, alias] = inner.split("|");
+    if (alias !== undefined) return alias.trim();
+    const [path, heading] = target.split("#");
+    const name = path.split("/").pop()!.replace(/\.md$/i, "").trim();
+    return name || (heading ?? "").trim();
+  });
 }
 
 /** The parent folder of *path*, "" at the vault root. */
@@ -102,9 +124,9 @@ export function buildNote(
   const key = noteKey(vaultKey, source.path);
   if (source.path.length > LIMITS.path || key.length > LIMITS.key) return null;
 
-  const body = source.content.slice(source.bodyStart).replace(/^\s+/, "");
-  let definition = field(fm, "definition", "meaning");
-  let context = field(fm, "context", "example", "sentence");
+  const body = plainLinks(source.content.slice(source.bodyStart)).replace(/^\s+/, "");
+  let definition = optionalPlain(field(fm, "definition", "meaning"));
+  let context = optionalPlain(field(fm, "context", "example", "sentence"));
   const kept: string[] = [];
   let firstHeading = true;
 
