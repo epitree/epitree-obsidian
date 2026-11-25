@@ -68,7 +68,8 @@ export class EpitreeSettingTab extends PluginSettingTab {
       text:
         "Only notes in these folders are sent. In “One note is one word”, the note's title is the word, and a " +
         "definition (in frontmatter or a “Definition:” line) is kept as you wrote it. In “AI finds the terms”, " +
-        "the note's text is sent to Epitree's AI provider to pick out up to 10 terms. Add “epitree: false” to a " +
+        "the note's text is sent to Epitree's AI provider to pick out terms: up to 10 from every 3 pages or so, " +
+        "reading up to 15 pages of a long note, and each part read counts as one note. Add “epitree: false” to a " +
         "note's frontmatter to keep it out.",
     });
 

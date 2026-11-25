@@ -37,8 +37,11 @@ export const LIMITS = {
   language: 50,
   /** The note's own text kept on the word. */
   notes: 2000,
-  /** What the AI reads in "terms" mode. */
-  body: 8000,
+  /**
+   * What the AI reads in "terms" mode: up to 5 parts of 8,000 characters
+   * (about 15 pages), each read on its own (server: app/services/note_parts.py).
+   */
+  body: 40000,
   links: 200,
   tags: 50,
   folder: 1024,

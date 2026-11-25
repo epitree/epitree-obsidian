@@ -84,8 +84,10 @@ describe("the server's limits", () => {
     expect(note.notes!.length).toBe(LIMITS.notes);
   });
 
-  it("sends at most 8,000 characters for the AI to read", () => {
-    expect(build(source("Raft.md", long(9000)), TERMS).body!.length).toBe(LIMITS.body);
+  it("sends up to 40,000 characters for the AI to read in parts", () => {
+    expect(LIMITS.body).toBe(40000);
+    expect(build(source("Raft.md", long(50000)), TERMS).body!.length).toBe(40000);
+    expect(build(source("Raft.md", long(9000)), TERMS).body!.length).toBe(9000);
   });
 
   it("keeps the first 200 links and 50 tags, always the same ones", () => {

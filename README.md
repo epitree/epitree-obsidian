@@ -7,8 +7,11 @@ remember them.
 - **One note is one word.** For vocabulary or concept notes: the note's title
   is the word, and your own definition is kept exactly as you wrote it.
 - **AI finds the terms in my notes.** For lecture or reading notes: Epitree's
-  AI picks up to 10 terms worth learning out of each note, with a sentence
-  from the note and a short definition.
+  AI picks the terms worth learning out of each note, with a sentence from the
+  note and a short definition. A long note is read in parts of about 3 pages
+  (8,000 characters), split at its headings, with up to 10 terms from each
+  part. Up to 5 parts are read, about 15 pages; the rest of a longer note is
+  not sent to the AI.
 
 Your folders become branches in the Concept Tree, and your `[[links]]` between
 notes become links between the words. Only notes that changed are sent again,
@@ -67,8 +70,18 @@ every 30 minutes.
 | `epitree: false` in frontmatter | Nothing: the note is never sent |
 
 A note without a definition gets one from Epitree's AI, in your Epitree
-language. If you edit a word in Epitree, a later sync never overwrites your
-edit; it only fills in what is empty.
+language.
+
+When you edit a note, the next sync updates its word: the definition, the
+sentence and your notes. A definition you add later replaces the AI's. If
+you changed one of those fields in Epitree, your change there is kept. Moving
+a note to another folder moves its word to that branch, unless you moved the
+word yourself in Epitree. Deleting a note never deletes its word.
+
+**What counts against your import allowance:** each new word in "One note is
+one word"; in "AI finds the terms", each part of a note the AI reads, plus
+each term past one per part. Notes for words you already have, edits, and
+moves are free.
 
 ## Privacy and network use
 
@@ -78,7 +91,7 @@ only:
 
 - **What is sent:** for each note in your chosen folders, its title, path,
   folder, frontmatter `term`, `definition`, `context` and `language`, its
-  other text (up to 2,000 characters, or 8,000 in "AI finds the terms"
+  other text (up to 2,000 characters, or 40,000 in "AI finds the terms"
   mode), its tags, which of your other notes it links to, your vault's name
   (so that the word's source link opens the note), and a fingerprint of the
   note.

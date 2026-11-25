@@ -1,6 +1,6 @@
 {
   "name": "epitree-obsidian",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Send your Obsidian notes to Epitree, where they become words with spaced-repetition reviews.",
   "main": "main.js",
   "type": "module",
