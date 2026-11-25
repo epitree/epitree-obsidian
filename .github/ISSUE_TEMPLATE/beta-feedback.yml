@@ -1,0 +1,100 @@
+name: Beta feedback
+description: Something went wrong, looked wrong, or could be better while testing Epitree for Obsidian.
+title: "[Beta] "
+labels: ["beta"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thank you for testing! Please don't paste your access token or private notes here: this page is public.
+
+  - type: dropdown
+    id: kind
+    attributes:
+      label: What kind of feedback is this?
+      options:
+        - Something didn't work (an error, or a sync that didn't happen)
+        - A word, definition or term looks wrong
+        - Setup or wording was confusing
+        - An idea or a request
+    validations:
+      required: true
+
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened?
+      description: What you did, and what you saw.
+      placeholder: |
+        I added my "Lectures" folder in "AI finds the terms" mode and selected Send.
+        The notice said "…", and no words appeared in Epitree.
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: What did you expect?
+    validations:
+      required: false
+
+  - type: textarea
+    id: notice
+    attributes:
+      label: The exact text of any Epitree notice
+      description: Notices appear at the top right of Obsidian and start with "Epitree:". Copy the text as it is.
+      render: text
+    validations:
+      required: false
+
+  - type: dropdown
+    id: mode
+    attributes:
+      label: Which mode was the folder in?
+      options:
+        - One note is one word
+        - AI finds the terms in my notes
+        - 'The "Send this note" command (a note outside my folders)'
+        - Not about a folder
+    validations:
+      required: false
+
+  - type: textarea
+    id: example
+    attributes:
+      label: An example note, if it helps
+      description: A short note that shows the problem. Leave out anything private.
+      render: markdown
+    validations:
+      required: false
+
+  - type: input
+    id: plugin-version
+    attributes:
+      label: Plugin version
+      description: Settings → Community plugins → Epitree.
+      placeholder: "0.1.2"
+    validations:
+      required: true
+
+  - type: input
+    id: obsidian-version
+    attributes:
+      label: Obsidian version
+      description: Settings → General.
+      placeholder: "1.15.1"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: device
+    attributes:
+      label: Device
+      options:
+        - macOS
+        - Windows
+        - Linux
+        - iPhone or iPad
+        - Android
+    validations:
+      required: true
